@@ -3,7 +3,7 @@ import mongoose from "mongoose"
 import app from "./app"
 import { envVars } from "./app/config/env";
 
-const port = 3000
+const port = 5000
 
 let server: Server;
 let user;
