@@ -1,16 +1,29 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors"
-import { userRoute } from "./app/modules/user/user.route";
+import { router } from "./app/routes";
+import httpStatus from "http-status-codes"
+import { globalErrHandler } from "./app/middlewares/globalErrHandlers";
 const app = express()
 
 
 app.use(express.json())
 app.use(cors())
 
-app.use('/api/v1/user', userRoute)
+app.use('/api/v1', router)
+
+
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
+})
+
+app.use(globalErrHandler)
+
+app.use((req:Request, res:Response)=>{
+  res.status(httpStatus.NOT_FOUND).json({
+    success: false,
+    message:"Page not fount"
+  })
 })
 
 
