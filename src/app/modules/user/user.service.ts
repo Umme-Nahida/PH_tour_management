@@ -1,15 +1,31 @@
-import { IUser } from "./user.interface";
+import AppError from "../../ErrorHelpers/appError";
+import { IAuthProvider, IUser } from "./user.interface";
 import { Users } from "./user.model";
+import httpStatus from "http-status-codes"
+import becryptjs from "bcryptjs"
 
 
 const addUser = async(payload: Partial<IUser>)=>{
 
-      const {name,email} = payload;
+      const {name,email,password,...rest} = payload;
 
-        const addUser = await Users.create({
-            name,
-            email
-        })
+      const exceedUser = await Users.findOne({email})
+
+      if(exceedUser){
+        throw new AppError(httpStatus.BAD_REQUEST, "User already exceed")
+      }
+
+      const hashedPassword = await becryptjs.hash(password as string,10)
+
+      const authProvider: IAuthProvider = {provider:'credential', providerId:email as string}
+
+         const addUser = await Users.create({
+             name,
+             email,
+             password: hashedPassword,
+             auth: [authProvider],
+             ...rest
+         })
      
         return addUser
 
