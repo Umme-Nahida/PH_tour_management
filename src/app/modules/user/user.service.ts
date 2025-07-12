@@ -7,7 +7,7 @@ import becryptjs from "bcryptjs"
 
 const addUser = async(payload: Partial<IUser>)=>{
 
-      const {name,email,password,...rest} = payload;
+      const {email,password,...rest} = payload;
 
       const exceedUser = await Users.findOne({email})
 
@@ -20,7 +20,6 @@ const addUser = async(payload: Partial<IUser>)=>{
       const authProvider: IAuthProvider = {provider:'credential', providerId:email as string}
 
          const addUser = await Users.create({
-             name,
              email,
              password: hashedPassword,
              auth: [authProvider],
