@@ -1,11 +1,16 @@
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors"
+import cookieParser from "cookie-parser";
 import { router } from "./app/routes";
 import httpStatus from "http-status-codes"
 import { globalErrHandler } from "./app/middlewares/globalErrHandlers";
+import passport from "passport";
 const app = express()
 
 
+app.use(passport.initialize())
+app.use(passport.session())
+app.use(cookieParser())
 app.use(express.json())
 app.use(cors())
 
