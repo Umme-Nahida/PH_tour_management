@@ -1,21 +1,25 @@
 import AppError from "../../ErrorHelpers/appError";
-import { IAuthProvider, IUser } from "./user.interface";
+import { IAuthProvider, IUser, Role } from "./user.interface";
 import { Users } from "./user.model";
 import httpStatus from "http-status-codes"
 import becryptjs from "bcryptjs"
+import { envVars } from "../../config/env";
+import { JwtPayload } from "jsonwebtoken";
+import { strictObject } from "zod";
 
 
 const addUser = async(payload: Partial<IUser>)=>{
 
       const {email,password,...rest} = payload;
+      console.log("addUserPayload",payload)
 
       const exceedUser = await Users.findOne({email})
 
-      if(exceedUser){
-        throw new AppError(httpStatus.BAD_REQUEST, "User already exceed")
-      }
+    //   if(exceedUser){
+    //     throw new AppError(httpStatus.BAD_REQUEST, "User already exceed")
+    //   }
 
-      const hashedPassword = await becryptjs.hash(password as string,10)
+      const hashedPassword = await becryptjs.hash(password as string,Number(envVars.becrypt_salt_round))
 
       const authProvider: IAuthProvider = {provider:'credential', providerId:email as string}
 
@@ -29,6 +33,7 @@ const addUser = async(payload: Partial<IUser>)=>{
         return addUser
 
 }
+
 const getAllUser = async()=>{
 
         const getUsers = await Users.find()
@@ -40,7 +45,43 @@ const getAllUser = async()=>{
 
 }
 
+const updateUser =async (userId:string, userInfo: Partial<IUser>, decodedToken:JwtPayload)=>{
+
+    const isUserExist = await Users.findById(userId)
+    console.log("isUserExist",isUserExist)
+    if(!isUserExist){
+            throw new AppError(httpStatus.NOT_FOUND,"uer not found ")
+    }
+
+
+    if(userInfo.role){
+        if(userInfo.role === Role.USER || decodedToken.role === Role.GUIDE){
+            throw new AppError(httpStatus.BAD_REQUEST,"you are anAuthorized")
+        }
+
+        if(userInfo.role === Role.SUPER_ADMIN && decodedToken.role === Role.ADMIN){
+            throw new AppError(httpStatus.BAD_REQUEST,"you are anAuthorized")
+        }
+    }
+
+    if(userInfo.isActive || userInfo.isDeleted || userInfo.isVerified){
+
+          if(decodedToken.role === Role.USER || decodedToken.role === Role.GUIDE){
+            throw new AppError(httpStatus.BAD_REQUEST,"you are anAuthorized")
+        }
+    }
+
+    if(userInfo.password){
+         userInfo.password = await becryptjs.hash(userInfo.password as string,Number(envVars.becrypt_salt_round))
+    }
+
+    const updateNewUser = await Users.findByIdAndUpdate(userId,userInfo,{new: true})
+    return updateNewUser;
+}
+
+
 export const userServices = {
     addUser,
-    getAllUser
+    getAllUser,
+    updateUser
 }

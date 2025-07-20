@@ -5,9 +5,17 @@ import { router } from "./app/routes";
 import httpStatus from "http-status-codes"
 import { globalErrHandler } from "./app/middlewares/globalErrHandlers";
 import passport from "passport";
+import "./app/config/passport"
+import expressSession from "express-session"
 const app = express()
 
-
+// why is it use
+app.use(expressSession({
+  secret:"your secret",
+  resave:false,
+  saveUninitialized:false
+  
+}))
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(cookieParser())

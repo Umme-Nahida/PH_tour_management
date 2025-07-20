@@ -3,6 +3,9 @@ import httpStatus from "http-status-codes"
 import { userServices } from "./user.service";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
+import { verifyToken } from "../../utils/jwt";
+import { envVars } from "../../config/env";
+import { JwtPayload } from "jsonwebtoken";
 
 
 // const createUser = async(req:Request,res:Response, next:NextFunction)=>{
@@ -39,6 +42,27 @@ const createUser = catchAsync(async(req:Request,res:Response, next:NextFunction)
 })
 
 
+const updateUser = catchAsync(async(req:Request,res:Response, next:NextFunction)=>{
+        const userId = req.params.id;
+        const token = req.headers.authorization;
+        const decodedToken = verifyToken(token as string, envVars.secret) as JwtPayload
+        const userInfo = req.body;
+        const updateResult = userServices.updateUser(userId,userInfo,decodedToken)
+        
+        // res.status(httpStatus.CREATED).json({
+        //     message: "user created successfully",
+        //     result
+        // })
+
+        sendResponse(res,{
+            success: true,
+            statusCode: httpStatus.OK,
+            message: "user updated successfully",
+            data: updateResult
+        })
+})
+
+
 const getAllUser = async(req:Request,res:Response, next:NextFunction)=>{
     try{
     //   throw new AppError(httpStatus.BAD_REQUEST,"fake Error is generated")
@@ -60,7 +84,8 @@ const getAllUser = async(req:Request,res:Response, next:NextFunction)=>{
 
 export const userController = {
     createUser,
-    getAllUser
+    getAllUser,
+    updateUser
 }
 
 
