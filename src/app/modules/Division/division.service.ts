@@ -7,14 +7,26 @@ import httpStatus from "http-status-codes"
 const createDivision = async(payload:Partial<IDivision>)=>{
     const division = payload;
 
+    const isExistDivision = await Division.findOne({name:payload.name})
+
+    if(isExistDivision){
+        throw new AppError(httpStatus.BAD_REQUEST,"A Division with this name already exist ")
+    }
+
     const addDivision = await Division.create(division);
     return addDivision;
 }
 
 const getAllDivision = async()=>{
 
-    const allDivision = await Division.find();
-    return allDivision;
+    const allDivision = await Division.find({});
+    const countDivision = await Division.countDocuments()
+    return {
+        data:allDivision,
+        meta:{
+            total: countDivision
+        }
+    };
 }
 
 const updateDivision = async(divisionId:string, payload:Partial<IDivision>)=>{
