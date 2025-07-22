@@ -4,7 +4,7 @@ import { Division } from "./division.model";
 import httpStatus from "http-status-codes"
 
 
-const createDivision = async(payload:Partial<IDivision>)=>{
+const createDivision = async(payload:IDivision)=>{
     const division = payload;
 
     const isExistDivision = await Division.findOne({name:payload.name})
@@ -12,6 +12,16 @@ const createDivision = async(payload:Partial<IDivision>)=>{
     if(isExistDivision){
         throw new AppError(httpStatus.BAD_REQUEST,"A Division with this name already exist ")
     }
+
+    //   const baseSlug = payload.name?.toLocaleLowerCase().split(" ").join("-")
+
+    //  let slug = `${baseSlug}-division`;
+    //  let counter = 0
+    // while(await Division.exists({slug})){
+    //     slug =  `${slug}-${counter++}`
+    // }
+
+    // payload.slug = slug;
 
     const addDivision = await Division.create(division);
     return addDivision;
@@ -36,7 +46,18 @@ const updateDivision = async(divisionId:string, payload:Partial<IDivision>)=>{
       throw new AppError(httpStatus.NOT_FOUND,"this division does not exist")
     }
 
-    const updatedDivision = await Division.findByIdAndUpdate(divisionId,payload,{new:true})
+    // -------------check is this division already exist in another id 
+    const dublicateDivision = await Division.findOne({
+        name: payload.name,
+        _id: {$ne:divisionId}
+    })
+    
+    if(dublicateDivision){
+        throw new AppError(httpStatus.NOT_FOUND,"this division is already exist")
+    }
+
+    //--------------------------------- what is purpose of runValidators: true
+    const updatedDivision = await Division.findByIdAndUpdate(divisionId,payload,{new:true,runValidators:true})
     return updatedDivision;
 }
 

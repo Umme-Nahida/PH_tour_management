@@ -3,6 +3,9 @@ import { tourController } from "./tour.controler";
 
 
 const router = Router()
+
+
+// ---------------------------------------------tour routes
 router.post("/create-tour-type",tourController.createTour)
 
 router.get("/tour-types",(req:Request,res:Response)=>{
