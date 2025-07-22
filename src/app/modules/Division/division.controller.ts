@@ -4,8 +4,8 @@ import httpStatus from "http-status-codes"
 import { catchAsync } from "../../utils/catchAsync";
 import { divisionServices } from "./division.service";
 
-const createDivisionType = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const division = await divisionServices.createDivision(req.body);
+const createDivision = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const division = await divisionServices.createDivision(req.body)
 
     sendResponse(res, {
         success: true,
@@ -59,7 +59,7 @@ const deleteDivision = catchAsync(async (req: Request, res: Response, next: Next
 
 
 export const divisionController = {
-    createDivisionType,
+    createDivision,
     getAllDivision,
     updateDivision,
     deleteDivision
