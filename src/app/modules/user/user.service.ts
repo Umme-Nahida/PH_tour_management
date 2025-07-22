@@ -5,7 +5,7 @@ import httpStatus from "http-status-codes"
 import becryptjs from "bcryptjs"
 import { envVars } from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
-import { strictObject } from "zod";
+
 
 
 const addUser = async(payload: Partial<IUser>)=>{

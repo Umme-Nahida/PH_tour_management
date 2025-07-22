@@ -12,7 +12,9 @@ export const createZodSchema = z.object({
         phone: z.string({ invalid_type_error: "Phone number must be a string" })
             .regex(/^(?:\+8801\d{9}|01\d{9})$/, { message: "Phone number must be valid for Bangladesh, format: +8801XXXXXXXXX or 01XXXXXXXXX" })
             .optional(),
-        address: z.string({ invalid_type_error: "adrees must be a string" }).min(200, { message: "address can not exceed 200 characters" }).optional()
+        address: z.string({ invalid_type_error: "adrees must be a string" }).min(200, { message: "address can not exceed 200 characters" }).optional(),
+         isDeleted: z.boolean({message:"isDeleted must be true or false"}).optional(),
+        isVerified: z.boolean({message:"isVerified must be true or false"}).optional(),
     })
 
 
