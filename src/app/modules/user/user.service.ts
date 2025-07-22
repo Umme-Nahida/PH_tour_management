@@ -15,9 +15,9 @@ const addUser = async(payload: Partial<IUser>)=>{
 
       const exceedUser = await Users.findOne({email})
 
-    //   if(exceedUser){
-    //     throw new AppError(httpStatus.BAD_REQUEST, "User already exceed")
-    //   }
+      if(exceedUser){
+        throw new AppError(httpStatus.BAD_REQUEST, "User already exceed")
+      }
 
       const hashedPassword = await becryptjs.hash(password as string,Number(envVars.becrypt_salt_round))
 
@@ -50,7 +50,7 @@ const updateUser =async (userId:string, userInfo: Partial<IUser>, decodedToken:J
     const isUserExist = await Users.findById(userId)
     console.log("isUserExist",isUserExist)
     if(!isUserExist){
-            throw new AppError(httpStatus.NOT_FOUND,"uer not found ")
+            throw new AppError(httpStatus.NOT_FOUND,"user not found ")
     }
 
 

@@ -15,7 +15,7 @@ const route = Router();
 
 
 route.post('/register',
-    // validateCreateUserSchema(createZodSchema),
+    validateCreateUserSchema(createZodSchema),
     userController.createUser);
 
 route.get('/all-user',checkAuth(Role.ADMIN,Role.SUPER_ADMIN), userController.getAllUser);

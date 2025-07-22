@@ -12,14 +12,14 @@ const authProviderScema = new Schema<IAuthProvider>({
 })
 
 const userSchema = new Schema<IUser>({
-    name: {type: String, requred: true},
-    email: {type: String, requred: true, unique:true},
+    name: {type: String, required: true},
+    email: {type: String, required: true, unique:true},
     password: {type:String},
     role: {type: String, enum: Object.values(Role), default: Role.USER},
     phone: {type:String},
     image: {type:String},
     address: {type:String},
-    isDeleted: {type:Boolean},
+    isDeleted: {type:Boolean,default:false},
     isActive: {type:String, enum: Object.values(isActive)},
     isVerified: {type: Boolean, default: false},
     auth: {
