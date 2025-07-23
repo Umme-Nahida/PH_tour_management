@@ -39,6 +39,14 @@ const getAllDivision = async()=>{
     };
 }
 
+const getSignleDivision = async(slug:string)=>{
+   
+    const allDivision = await Division.findOne({slug});
+    return {
+        data:allDivision,
+    };
+}
+
 const updateDivision = async(divisionId:string, payload:Partial<IDivision>)=>{
     const isExistDivision = await Division.findById(divisionId)
 
@@ -77,6 +85,7 @@ const deletedDivision = async(divisionId:string, payload:Partial<IDivision>)=>{
 export const divisionServices= {
     createDivision,
     getAllDivision,
+    getSignleDivision,
     updateDivision,
     deletedDivision
 }
