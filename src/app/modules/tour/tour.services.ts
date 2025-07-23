@@ -3,6 +3,9 @@ import AppError from "../../ErrorHelpers/appError";
 import httpStatus from "http-status-codes"
 import { ITour, ITourType } from "./tour.interface";
 import { Tour, TourType } from "./tour.model";
+import { exitToruQuery, searchField } from "./tour.constand";
+import { Query } from "mongoose";
+import { QueryModel } from "../../utils/QueryBuilder";
 
 
 const createTour = async(payload:Partial<ITour>)=>{
@@ -12,34 +15,97 @@ const createTour = async(payload:Partial<ITour>)=>{
     return addTour;
 }
 
-const getAllTour = async(query: Record<string,string>)=>{
-    console.log(query)
-    const searchQuery = query.searchTerm || "";
-    const searchField = ["title","location","description"]
 
-    // created searchArray with dynamically 
-    const searchArray = searchField.map(field=>({[field]:{$regex:searchQuery,$options:"i"}}))
+//---------------------- get tour old---------------------
+// const getAllTour = async(query: Record<string,string>)=>{
+//     console.log(query)
+//     const searchTerm = query.searchTerm || "";
+//     const sort = query.sort || "-createdAt";
+//     const page = Number(query.page) || 1;
+//     const limit = Number(query.limit) || 5;
+//     const skip = (page - 1) * limit;
+
+//     //--------------------------- this fil filtering will be used when you dont need to all property------------
+//     const select = query.select.split(",").join(" ") || "";
+   
+//     // delete query["searchTerm"]
+//     // delete query["sort"]
+
+//     for(const field of exitToruQuery){
+//         delete query[field]
+//     }
+//     // ---------------------created searchArray with dynamically------------------
+//     const searchArray = searchField.map(field=>({[field]:{$regex:searchTerm,$options:"i"}}))
     
-    const allDivision = await Tour.find({
-        // title:{$regex:searchQuery,$options:"i"}
+    
+//     // const searchingQuery = {
+//     //     $or: searchArray
+//     // }
+    
+//     const allDivision = await Tour.find({
+//         // title:{$regex:searchQuery,$options:"i"}
 
-        // $or:[
-        //     {title:{$regex:searchQuery,$options:"i"}},
-        //     {location:{$regex:searchQuery,$options:"i"}},
-        //     {description:{$regex:searchQuery,$options:"i"}},
-        // ]
+//         // $or:[
+//         //     {title:{$regex:searchQuery,$options:"i"}},
+//         //     {location:{$regex:searchQuery,$options:"i"}},
+//         //     {description:{$regex:searchQuery,$options:"i"}},
+//         // ]
 
-        $or:searchArray
-    });
-    const totalDivision = await Tour.countDocuments()
+//         $or:searchArray
+//     }).find(query).sort(sort).select(select).skip(skip).limit(limit);
+
+
+//     const totalDivision = await Tour.countDocuments()
+//     const totalPage = Math.ceil(totalDivision / limit);
+//     return {
+//         data:allDivision,
+//         meta:{
+//             page:page,
+//             limit:limit,
+//             totalPage:totalPage,
+//             total: totalDivision
+//         }
+//     }
+
+
+// }
+
+
+
+
+
+// -------------------get All tour-----------------
+const getAllTour = async(query: Record<string,string>)=>{
+    
+    const queryBuilder = new QueryModel(Tour.find(),query)
+    const tourResult = await queryBuilder
+                      .search(searchField)
+                      .filter()
+                      .sort()
+                      .select()
+                      .pagination()
+                      .build()
+
+    const metaData = await queryBuilder.getMeta()
+
+    // const queryExecuted = await Promise.all([
+    //     queryBuilder.build(),
+    //     queryBuilder.getMeta()
+    // ])
+
+    // console.log(queryExecuted)
     return {
-        data:allDivision,
-        meta:{
-            total: totalDivision
-        }
+        data:tourResult,
+        meta:metaData
     }
+
+
 }
 
+
+
+
+// ----------------------------update tour------------------//
 const updatetour = async(divisionId:string, payload:Partial<ITour>)=>{
     const isExistDivision = await Tour.findById(divisionId)
 
@@ -51,6 +117,8 @@ const updatetour = async(divisionId:string, payload:Partial<ITour>)=>{
     return updatedDivision;
 }
 
+
+//----------------------------delete tour--------------------//
 const deletedTour = async(divisionId:string)=>{
     const isExistDivision = await Tour.findById(divisionId)
 
@@ -63,7 +131,7 @@ const deletedTour = async(divisionId:string)=>{
 }
 
 
-// ---------------------------tour-types 
+// ---------------------------(tour-types)----------// 
 const createTourType = async (name: ITourType) => {
     console.log("name:",name)
     const existingTourType = await TourType.findOne({ name: name });
@@ -75,6 +143,8 @@ const createTourType = async (name: ITourType) => {
     return await TourType.create({ name });
 };
 
+
+//--------------------get tour-types----------------
 const getAllTourTypes = async () => {
     return await TourType.find();
 };
