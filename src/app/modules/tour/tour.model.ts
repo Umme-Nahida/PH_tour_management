@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { ITour, ITourType } from "./tour.interface";
+import { string } from "zod";
 
 const tourTypeSchema = new Schema<ITourType>({
     name: { type: String, required: true, unique: true }
@@ -18,6 +19,8 @@ const tourSchema = new Schema<ITour>({
     costFrom: { type: Number },
     startDate: { type: Date },
     endDate: { type: Date },
+    departureLocation:{type:string},
+    arrivalLocation: {type:string}, 
     included: { type: [String], default: [] },
     excluded: { type: [String], default: [] },
     amenities: { type: [String], default: [] },
