@@ -1,8 +1,8 @@
 
 import AppError from "../../ErrorHelpers/appError";
 import httpStatus from "http-status-codes"
-import { ITour } from "./tour.interface";
-import { Tour } from "./tour.model";
+import { ITour, ITourType } from "./tour.interface";
+import { Tour, TourType } from "./tour.model";
 
 
 const createTour = async(payload:Partial<ITour>)=>{
@@ -12,10 +12,32 @@ const createTour = async(payload:Partial<ITour>)=>{
     return addTour;
 }
 
-const getAllTour = async()=>{
+const getAllTour = async(query: Record<string,string>)=>{
+    console.log(query)
+    const searchQuery = query.searchTerm || "";
+    const searchField = ["title","location","description"]
 
-    const allDivision = await Tour.find();
-    return allDivision;
+    // created searchArray with dynamically 
+    const searchArray = searchField.map(field=>({[field]:{$regex:searchQuery,$options:"i"}}))
+    
+    const allDivision = await Tour.find({
+        // title:{$regex:searchQuery,$options:"i"}
+
+        // $or:[
+        //     {title:{$regex:searchQuery,$options:"i"}},
+        //     {location:{$regex:searchQuery,$options:"i"}},
+        //     {description:{$regex:searchQuery,$options:"i"}},
+        // ]
+
+        $or:searchArray
+    });
+    const totalDivision = await Tour.countDocuments()
+    return {
+        data:allDivision,
+        meta:{
+            total: totalDivision
+        }
+    }
 }
 
 const updatetour = async(divisionId:string, payload:Partial<ITour>)=>{
@@ -29,21 +51,63 @@ const updatetour = async(divisionId:string, payload:Partial<ITour>)=>{
     return updatedDivision;
 }
 
-
-const deletedTour = async(divisionId:string, payload:Partial<ITour>)=>{
+const deletedTour = async(divisionId:string)=>{
     const isExistDivision = await Tour.findById(divisionId)
 
     if(!isExistDivision){
       throw new AppError(httpStatus.NOT_FOUND,"this division does not exist")
     }
 
-    const deleteDivision = await Tour.findByIdAndDelete(divisionId,payload)
+    const deleteDivision = await Tour.findByIdAndDelete(divisionId)
     return deleteDivision;
 }
+
+
+// ---------------------------tour-types 
+const createTourType = async (name: ITourType) => {
+    console.log("name:",name)
+    const existingTourType = await TourType.findOne({ name: name });
+
+    if (existingTourType) {
+        throw new Error("Tour type already exists.");
+    }
+
+    return await TourType.create({ name });
+};
+
+const getAllTourTypes = async () => {
+    return await TourType.find();
+};
+
+const updateTourType = async (id: string, payload: ITourType) => {
+    const existingTourType = await TourType.findById(id);
+    if (!existingTourType) {
+        throw new Error("Tour type not found.");
+    }
+
+    const updatedTourType = await TourType.findByIdAndUpdate(id, payload, { new: true });
+    return updatedTourType;
+};
+
+const deleteTourType = async (id: string) => {
+    const existingTourType = await TourType.findById(id);
+    if (!existingTourType) {
+        throw new Error("Tour type not found.");
+    }
+
+    return await TourType.findByIdAndDelete(id);
+};
+
+
+
 
 export const tourServices = {
     createTour,
     getAllTour,
     updatetour,
-    deletedTour
+    deletedTour,
+    createTourType,
+    getAllTourTypes,
+    updateTourType,
+    deleteTourType
 }

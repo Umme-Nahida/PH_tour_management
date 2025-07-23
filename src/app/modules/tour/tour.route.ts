@@ -1,23 +1,47 @@
 import { Request, Response, Router } from "express";
 import { tourController } from "./tour.controler";
+import { checkAuth } from "../../utils/checkAuth";
+import { Role } from "../user/user.interface";
+import { createTourZodSchema, updateTourZodSchema } from "./tour.validation";
+import { validateCreateUserSchema } from "../../middlewares/validateRequest";
 
 
 const router = Router()
 
 
-// ---------------------------------------------tour routes
-router.post("/create-tour-type",tourController.createTour)
+// ---------------------------------------------tour-types routes
+router.post("/create-tour-type",tourController.createTourType)
 
-router.get("/tour-types",(req:Request,res:Response)=>{
-    console.log("created tour type")
-})
+router.get("/tour-types",tourController.getAllTourType)
 
-router.patch("/tour-types/:id",(req:Request,res:Response)=>{
-    console.log("created tour type")
-})
+router.patch("/tour-types/:id",tourController.updateTourType)
 
-router.delete("/tour-types/:id",(req:Request,res:Response)=>{
-    console.log("created tour type")
-})
+router.delete("/tour-types/:id",tourController.deleteTourType)
+
+
+/* --------------------- TOUR ROUTES ---------------------- */
+router.get("/", tourController.getAllTours);
+
+router.post(
+    "/create",
+    checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+    validateCreateUserSchema(createTourZodSchema),
+    tourController.createTour
+);
+
+router.patch(
+    "/:id",
+    checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+    validateCreateUserSchema(updateTourZodSchema),
+    tourController.updateTour
+);
+
+router.delete("/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), tourController.deleteTour);
+
+
+
+
+
+
 
 export const tourRoute = router;
