@@ -14,6 +14,7 @@ router.post("/create",
 router.get("/",divisionController.getAllDivision)
 
 
+router.get("/:slug",divisionController.getSingleDivision)
 router.patch("/:id",divisionController.updateDivision)
 
 router.delete("/:id",divisionController.deleteDivision)
