@@ -26,6 +26,18 @@ const getAllDivision = catchAsync(async (req: Request, res: Response, next: Next
         data: division
     })
 })
+const getSingleDivision = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const slug = req.params.slug;
+    console.log(slug)
+    const division = await divisionServices.getSignleDivision(slug)
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.CREATED,
+        message: "Single division is retrive successfully",
+        data: division
+    })
+})
 
 const updateDivision = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
@@ -61,6 +73,7 @@ const deleteDivision = catchAsync(async (req: Request, res: Response, next: Next
 export const divisionController = {
     createDivision,
     getAllDivision,
+    getSingleDivision,
     updateDivision,
     deleteDivision
 }
