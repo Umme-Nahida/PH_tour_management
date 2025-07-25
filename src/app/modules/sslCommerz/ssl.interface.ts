@@ -1,7 +1,7 @@
 export interface ISSLCommerz{
-    transaction:string,
-    amount:string
-    name:number,
+    transactionId:string,
+    amount:number,
+    name:string,
     email:string,
     phone:string,
     address:string
