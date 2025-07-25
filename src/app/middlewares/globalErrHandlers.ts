@@ -6,7 +6,7 @@ import { object } from "zod"
 export const globalErrHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
 
     if (envVars.node_env === "development") {
-        console.log("global:--------", err)
+        // console.log("global:--------", err)
     }
 
     let errorSources: any = [
@@ -28,7 +28,7 @@ export const globalErrHandler = (err: any, req: Request, res: Response, next: Ne
             path: errObj.path,
             message: errObj.message
         }))
-        console.log("path:-------", errorSources)
+        // console.log("path:-------", errorSources)
     }
 
     //------------------------------------------ handle zod validation err
@@ -64,7 +64,7 @@ export const globalErrHandler = (err: any, req: Request, res: Response, next: Ne
             message = err.message
     }
 
-    console.log(errorSources)
+    // console.log(errorSources)
     res.status(status).json({
         success: false,
         message: message,
