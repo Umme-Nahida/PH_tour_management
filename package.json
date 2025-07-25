@@ -28,7 +28,10 @@
     "typescript-eslint": "^8.36.0"
   },
   "dependencies": {
+    "@types/multer": "^2.0.0",
+    "axios": "^1.11.0",
     "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.7.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.1.0",
@@ -38,6 +41,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.17.0",
     "mongoose": "^8.16.2",
+    "multer": "^2.0.2",
     "passport": "^0.7.0",
     "passport-custom": "^1.1.1",
     "passport-google-oauth20": "^2.0.0",
