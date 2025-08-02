@@ -54,6 +54,27 @@ const credentialsLogin = catchAsync(async(req:Request,res:Response, next: NextFu
     // console.log(users)
 })
 
+// passport.use(new LocalStrategy(
+//   { usernameField: "email" }, // tell passport to use `email` instead of `username`
+//   async (email, password, done) => {
+//     try {
+//       const user = await Users.findOne({ email });
+//       if (!user) {
+//         return done(null, false, { message: "Incorrect email" });
+//       }
+
+//       const isMatch = await bcrypt.compare(password, user.password as string);
+//       if (!isMatch) {
+//         return done(null, false, { message: "Incorrect password" });
+//       }
+
+//       return done(null, user);
+//     } catch (err) {
+//       return done(err);
+//     }
+//   }
+// ));
+
 
 const logout = catchAsync(async(req:Request,res:Response, next:NextFunction)=>{
         
