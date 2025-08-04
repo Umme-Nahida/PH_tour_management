@@ -5,13 +5,17 @@ import { catchAsync } from "../../utils/catchAsync";
 import { divisionServices } from "./division.service";
 
 const createDivision = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const division = await divisionServices.createDivision(req.body)
+    console.log({
+        body: req.body,
+        file: req.file
+    })
+    // const division = await divisionServices.createDivision(req.body)
 
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.CREATED,
         message: "division created successfully",
-        data: division
+        data: {}
     })
 })
 
