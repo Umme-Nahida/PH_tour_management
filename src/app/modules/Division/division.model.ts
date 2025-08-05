@@ -29,7 +29,7 @@ divisionSchema.pre("save", async function (next) {
 divisionSchema.pre("findOneAndUpdate",async function (next) {
     const division = this.getUpdate() as Partial<IDivision>
 
-    if(division.name){
+    if(division?.name){
          const baseSlug = division.name?.toLocaleLowerCase().split(" ").join("-")
 
         let slug = `${baseSlug}-division`;

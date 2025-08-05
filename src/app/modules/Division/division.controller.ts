@@ -9,13 +9,18 @@ const createDivision = catchAsync(async (req: Request, res: Response, next: Next
         body: req.body,
         file: req.file
     })
-    // const division = await divisionServices.createDivision(req.body)
+
+    const payload = {
+        ...req.body,
+        thumbnail: req.file?.path
+    }
+    const division = await divisionServices.createDivision(payload)
 
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.CREATED,
         message: "division created successfully",
-        data: {}
+        data: division
     })
 })
 
@@ -45,7 +50,21 @@ const getSingleDivision = catchAsync(async (req: Request, res: Response, next: N
 
 const updateDivision = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
-    const divisionInfo = req.body;
+    let divisionInfo = req.body;
+
+    console.log({
+        body: req.body,
+        file: req.file
+    })
+     
+    if(req.file){
+        divisionInfo ={
+            ...divisionInfo,
+            thumbnail: req.file.path
+        }
+    }
+
+   
 
     const division = await divisionServices.updateDivision(id, divisionInfo)
 

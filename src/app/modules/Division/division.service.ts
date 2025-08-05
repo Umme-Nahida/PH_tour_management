@@ -1,3 +1,4 @@
+import { deletecloudinaryImage } from "../../config/cloudinary.config";
 import AppError from "../../ErrorHelpers/appError";
 import { IDivision } from "./division.interface";
 import { Division } from "./division.model";
@@ -48,6 +49,7 @@ const getSignleDivision = async(slug:string)=>{
 }
 
 const updateDivision = async(divisionId:string, payload:Partial<IDivision>)=>{
+    console.log("divisionInfo", payload)
     const isExistDivision = await Division.findById(divisionId)
 
     if(!isExistDivision){
@@ -56,7 +58,7 @@ const updateDivision = async(divisionId:string, payload:Partial<IDivision>)=>{
 
     // -------------check is this division already exist in another id 
     const dublicateDivision = await Division.findOne({
-        name: payload.name,
+        name: payload?.name,
         _id: {$ne:divisionId}
     })
     
@@ -66,6 +68,9 @@ const updateDivision = async(divisionId:string, payload:Partial<IDivision>)=>{
 
     //--------------------------------- what is purpose of runValidators: true
     const updatedDivision = await Division.findByIdAndUpdate(divisionId,payload,{new:true,runValidators:true})
+    if(payload?.thumbnail && isExistDivision?.thumbnail !== payload?.thumbnail){
+        await deletecloudinaryImage(isExistDivision.thumbnail as string)
+    }
     return updatedDivision;
 }
 

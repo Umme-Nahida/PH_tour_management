@@ -20,7 +20,8 @@ router.get("/",divisionController.getAllDivision)
 
 
 router.get("/:slug",divisionController.getSingleDivision)
-router.patch("/:id",divisionController.updateDivision)
+router.patch("/:id", multerStorage.single("file"),
+    divisionController.updateDivision)
 
 router.delete("/:id",divisionController.deleteDivision)
 
