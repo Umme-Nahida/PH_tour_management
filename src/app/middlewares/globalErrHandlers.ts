@@ -2,23 +2,28 @@ import { NextFunction, Request, Response } from "express"
 import { envVars } from "../config/env"
 import AppError from "../ErrorHelpers/appError"
 import { object } from "zod"
+import { deletecloudinaryImage } from "../config/cloudinary.config"
 
-export const globalErrHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
+export const globalErrHandler = async(err: any, req: Request, res: Response, next: NextFunction) => {
 
     if (envVars.node_env === "development") {
-        // console.log("global:--------", err)
+        console.log("globalerr:--------", err)
+    }
+    
+    if(req.file){
+        await deletecloudinaryImage(req.file.path)
     }
 
-    let errorSources: any = [
-        // {
-        //     path:"isDeleted",
-        //     message:"validation err isDeteled is boolean"
-        // }
-    ]
+
+    if (req.files && Array.isArray(req.files) && req.files.length) {
+        const imageUrls = (req.files as Express.Multer.File[]).map(file => file.path)
+
+        await Promise.all(imageUrls.map(url => deletecloudinaryImage(url)))
+    }
 
     let status = 500
     let message = `something went wrong ${err.message}`
-
+    let errorSources:any = []
 
     if (err.name === "ValidationError") {
         status=400

@@ -11,6 +11,23 @@ cloudinary.config({
     api_secret: envVars.CLOUDINARY.CLOUDINARY_API_SECRET
 })
 
+export const deletecloudinaryImage = async(url: string)=>{
+    //https://res.cloudinary.com/djzppynpk/image/upload/v1753126572/ay9roxiv8ue-1753126570086-download-2-jpg.jpg.jpg
+
+     try{
+           const regex = /\/v\d+\/(.*?)\.(jpg|jpeg|png|gif|webp)$/i;
+        const match = url.match(regex);
+
+        if(match && match[1]){
+            const publicId = match[1];
+            await cloudinary.uploader.destroy(publicId)
+            console.log(`delete image from cloudinary successfully: ${publicId}`)
+        }
+     }catch(err){
+        console.error("Error failed to delete image from cloudinary:",err)
+     }
+}
+
 export const cloudinaryUploads = cloudinary
 
 
