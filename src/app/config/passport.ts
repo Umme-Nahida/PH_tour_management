@@ -5,8 +5,7 @@ import { Users } from "../modules/user/user.model";
 import { isActive, Role } from "../modules/user/user.interface";
 import { Strategy as LocalStrategy } from "passport-local";
 import bcryptjs from "bcryptjs"
-import httpStatus from "http-status-codes"
-import AppError from "../ErrorHelpers/appError";
+
 
 
 passport.use(
@@ -32,8 +31,7 @@ passport.use(
             }
 
             if(isUserExist.isDeleted){
-                throw new  AppError(httpStatus.BAD_REQUEST, "user is deleted")
-                
+                return done(null, false, { message: "user is Deleted"})
             }
 
         
@@ -75,10 +73,22 @@ passport.use(
                     return done(null, false, { message: "no email find" })
                 }
 
-                let user = await Users.findOne({ email });
+                let isUserExist = await Users.findOne({ email });
 
-                if (!user) {
-                    user = await Users.create(({
+                            if(isUserExist?.isVerified === false){
+                return done(null, false, { message: "user is not verified"})
+            }
+
+            if(isUserExist?.isActive === isActive.INACTIVE || isUserExist?.isActive === isActive.BLOCKED){
+                 return done(null, false, { message:`user is ${isUserExist.isActive}` })
+            }
+
+            if(isUserExist?.isDeleted){
+                return done(null, false, { message: "user is Deleted"})
+            }
+
+                if (!isUserExist) {
+                    isUserExist = await Users.create(({
                         email,
                         name: profile.displayName,
                         image: profile.photos?.[0].value,
@@ -92,7 +102,7 @@ passport.use(
                         ]
                     }))
 
-                    return done(null, user, { message: "user created successfully known from passport" })
+                    return done(null, isUserExist, { message: "user created successfully known from passport" })
                 }
 
 
