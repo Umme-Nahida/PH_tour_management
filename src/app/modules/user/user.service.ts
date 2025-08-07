@@ -1,5 +1,5 @@
 import AppError from "../../ErrorHelpers/appError";
-import { IAuthProvider, IUser, Role } from "./user.interface";
+import { IAuthProvider, isActive, IUser, Role } from "./user.interface";
 import { Users } from "./user.model";
 import httpStatus from "http-status-codes"
 import becryptjs from "bcryptjs"
@@ -45,6 +45,22 @@ const getAllUser = async()=>{
 
 }
 
+
+const getMe = async(userId: string)=>{
+
+     const user = await Users.findById(userId).select("-password");
+     
+     if(user?.isDeleted || user?.isActive === isActive.BLOCKED || !user){
+        throw new AppError(httpStatus.BAD_REQUEST, "user is not found or deleted or blocked")
+     }
+   
+     return {
+        data: user
+     }
+    
+
+}
+
 const updateUser =async (userId:string, userInfo: Partial<IUser>, decodedToken:JwtPayload)=>{
 
     const isUserExist = await Users.findById(userId)
@@ -83,5 +99,6 @@ const updateUser =async (userId:string, userInfo: Partial<IUser>, decodedToken:J
 export const userServices = {
     addUser,
     getAllUser,
-    updateUser
+    updateUser,
+    getMe
 }
