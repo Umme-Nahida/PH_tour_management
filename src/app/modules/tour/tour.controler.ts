@@ -4,23 +4,29 @@ import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes"
 import { tourServices } from "./tour.services";
 
-const createTour = catchAsync(async(req:Request,res:Response, next: NextFunction)=>{
+const createTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
-   const result = await tourServices.createTour(req.body)
+    const files = req.files as Express.Multer.File[];
+    const payload = {
+        ...req.body,
+        images: files.map(file => file.path)
+    }
+
+    const result = await tourServices.createTour(payload)
 
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.OK,
-        message:"user login successfully",
+        message: "user login successfully",
         data: result
 
     })
- 
+
 })
 
 const getAllTours = catchAsync(async (req: Request, res: Response) => {
     const query = req.query;
-    const result = await tourServices.getAllTour(query as Record<string,string>)
+    const result = await tourServices.getAllTour(query as Record<string, string>)
     sendResponse(res, {
         statusCode: 200,
         success: true,
@@ -33,7 +39,18 @@ const getAllTours = catchAsync(async (req: Request, res: Response) => {
 
 const updateTour = catchAsync(async (req: Request, res: Response) => {
 
-    const result = await tourServices.updatetour(req.params.id, req.body);
+    const files = req.files as Express.Multer.File[];
+    console.log({
+        images: files,
+        body: req.body
+    })
+    const payload = {
+        ...req.body,
+        images: files.map(file => file.path)
+    }
+
+
+    const result = await tourServices.updatetour(req.params.id, payload);
     sendResponse(res, {
         statusCode: 200,
         success: true,
@@ -54,7 +71,7 @@ const deleteTour = catchAsync(async (req: Request, res: Response) => {
 });
 
 const createTourType = catchAsync(async (req: Request, res: Response) => {
-    const {name} = req.body;
+    const { name } = req.body;
     const result = await tourServices.createTourType(name)
     sendResponse(res, {
         statusCode: 200,

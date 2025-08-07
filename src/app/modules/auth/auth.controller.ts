@@ -100,16 +100,63 @@ const logout = catchAsync(async(req:Request,res:Response, next:NextFunction)=>{
 const resetPassword = catchAsync(async(req:Request,res:Response, next:NextFunction)=>{
         
        const decodeToken = req.user as JwtPayload;
-
-       const getNewPass = req.body.newPass;
-       const getOldPass = req.body.oldPass;
-
-       await authService.resetPassword(getOldPass,getNewPass,decodeToken)
+       await authService.resetPassword(req.body,decodeToken)
 
         sendResponse(res,{
             success: true,
             statusCode: httpStatus.OK,
             message: "password change successfully",
+            data: null
+        })
+})
+
+
+const changePassword = catchAsync(async(req:Request,res:Response, next:NextFunction)=>{
+        
+       const decodeToken = req.user as JwtPayload;
+
+       const getNewPass = req.body.newPass;
+       const getOldPass = req.body.oldPass;
+
+       await authService.changePassword(getOldPass,getNewPass,decodeToken)
+
+        sendResponse(res,{
+            success: true,
+            statusCode: httpStatus.OK,
+            message: "password change successfully",
+            data: null
+        })
+})
+
+
+const setPassword = catchAsync(async(req:Request,res:Response, next:NextFunction)=>{
+        
+       const decodeToken = req.user as JwtPayload;
+
+       const {password} = req.body; 
+
+       await authService.setPassword(decodeToken.userId, password)
+
+        sendResponse(res,{
+            success: true,
+            statusCode: httpStatus.OK,
+            message: "password change successfully",
+            data: null
+        })
+})
+
+
+const forgetPassword = catchAsync(async(req:Request,res:Response, next:NextFunction)=>{
+
+       
+       const {email} = req.body; 
+
+       await authService.forgetPassword(email)
+
+        sendResponse(res,{
+            success: true,
+            statusCode: httpStatus.OK,
+            message: "Email send successfully",
             data: null
         })
 })
@@ -161,5 +208,8 @@ export const authController= {
     getRefreshToken,
     logout,
     resetPassword,
-    googleCallback
+    changePassword,
+    googleCallback,
+    setPassword,
+    forgetPassword
 }

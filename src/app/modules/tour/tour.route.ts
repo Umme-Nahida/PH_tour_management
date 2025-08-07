@@ -4,6 +4,7 @@ import { checkAuth } from "../../utils/checkAuth";
 import { Role } from "../user/user.interface";
 import { createTourZodSchema, updateTourZodSchema } from "./tour.validation";
 import { validateCreateUserSchema } from "../../middlewares/validateRequest";
+import { multerStorage } from "../../config/multer.config";
 
 
 const router = Router()
@@ -25,6 +26,7 @@ router.get("/", tourController.getAllTours);
 router.post(
     "/create",
     checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+    multerStorage.array("files"),
     validateCreateUserSchema(createTourZodSchema),
     tourController.createTour
 );
@@ -32,6 +34,7 @@ router.post(
 router.patch(
     "/:id",
     checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+    multerStorage.array("files"),
     validateCreateUserSchema(updateTourZodSchema),
     tourController.updateTour
 );

@@ -6,11 +6,13 @@ import { Tour, TourType } from "./tour.model";
 import { exitToruQuery, searchField } from "./tour.constand";
 import { Query } from "mongoose";
 import { QueryModel } from "../../utils/QueryBuilder";
+import { string } from "zod";
+import { deletecloudinaryImage } from "../../config/cloudinary.config";
 
 
 const createTour = async(payload:Partial<ITour>)=>{
     const tourInfo = payload;
-
+   
     const addTour = await Tour.create(tourInfo);
     return addTour;
 }
@@ -106,14 +108,38 @@ const getAllTour = async(query: Record<string,string>)=>{
 
 
 // ----------------------------update tour------------------//
-const updatetour = async(divisionId:string, payload:Partial<ITour>)=>{
-    const isExistDivision = await Tour.findById(divisionId)
+const updatetour = async(tourId:string, payload:Partial<ITour>)=>{
+    const existingTour = await Tour.findById(tourId)
+    console.log("update Payload:",payload)
 
-    if(!isExistDivision){
-      throw new AppError(httpStatus.NOT_FOUND,"this division does not exist")
+    if(!existingTour){
+      throw new AppError(httpStatus.NOT_FOUND,"this tour does not exist")
     }
 
-    const updatedDivision = await Tour.findByIdAndUpdate(divisionId,payload,{new:true})
+     if(payload.images && payload.images.length >0 && existingTour.images && existingTour.images.length > 0){
+         payload.images = [...existingTour.images, ...payload.images]
+    }
+
+    console.log("uploaded images:",payload.images)
+    if(payload.deleteImages && payload.deleteImages.length > 0 && existingTour.images && existingTour.images.length > 0){
+       
+       
+        const existingImages = existingTour.images.filter(imageUrl => !payload.deleteImages?.includes(imageUrl))
+
+        const updatedPayloadImages = (payload.images as string[])
+       ?.filter(imageUrl => !payload.deleteImages?.includes(imageUrl))
+       .filter(imageUrl => !existingImages.includes(imageUrl))
+
+        payload.images = [...existingImages, ...updatedPayloadImages]
+        console.log("after filtering:",payload.images)
+    }
+
+
+    const updatedDivision = await Tour.findByIdAndUpdate(tourId,payload,{new:true, runValidators: true })
+
+     if(payload.deleteImages && payload.deleteImages.length > 0 && existingTour.images && existingTour.images.length > 0){
+         await Promise.all((payload.images as string[]).map(url => deletecloudinaryImage(url)))
+    }
     return updatedDivision;
 }
 

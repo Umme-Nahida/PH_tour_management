@@ -8,6 +8,7 @@ interface IEnvVars {
     node_env: string,
     secret: string,
     expiresIn: string,
+    FRONTEND_URL: string,
     becrypt_salt_round: string,
     super_admin_email: string,
     super_admin_pass: string,
@@ -34,19 +35,19 @@ interface IEnvVars {
         CLOUDINARY_API_KEY: string;
         CLOUDINARY_API_SECRET: string;
     },
-    //     EMAIL_SENDER: {
-    //     SMTP_USER: string;
-    //     SMTP_PASS: string;
-    //     SMTP_PORT: string;
-    //     SMTP_HOST: string;
-    //     SMTP_FROM: string;
-    // };
+        EMAIL_SENDER: {
+        SMTP_USER: string;
+        SMTP_PASS: string;
+        SMTP_PORT: string;
+        SMTP_HOST: string;
+        SMTP_FROM: string;
+    };
 
 
 }
 
 const loadEnvVars = (): IEnvVars => {
-    const requiredEnvVars: string[] = ["port", "DB_Url", "node_env", "secret", "expiresIn", "becrypt_salt_round", "super_admin_email", "super_admin_pass", "refresh_expiresIn", "refresh_secret", "EXPRESS_SESSION_SECRET", "GOOGLE_CLIENT_SECRET", "GOOGLE_CLIENT_ID", "GOOGLE_CALLBACK_URL",
+    const requiredEnvVars: string[] = ["port", "DB_Url", "node_env", "secret", "expiresIn","FRONTEND_URL", "becrypt_salt_round", "super_admin_email", "super_admin_pass", "refresh_expiresIn", "refresh_secret", "EXPRESS_SESSION_SECRET", "GOOGLE_CLIENT_SECRET", "GOOGLE_CLIENT_ID", "GOOGLE_CALLBACK_URL",
         "SSL_STORE_ID",
         "SSL_STORE_PASS",
         "SSL_PAYMENT_API", "SSL_VALIDATION_API",
@@ -59,11 +60,11 @@ const loadEnvVars = (): IEnvVars => {
         "CLOUDINARY_CLOUD_NAME",
         "CLOUDINARY_API_KEY",
         "CLOUDINARY_API_SECRET",
-        // "SMTP_PASS",
-        // "SMTP_PORT",
-        // "SMTP_HOST",
-        // "SMTP_USER",
-        // "SMTP_FROM",
+        "SMTP_PASS",
+        "SMTP_PORT",
+        "SMTP_HOST",
+        "SMTP_USER",
+        "SMTP_FROM",
     ]
 
     requiredEnvVars.forEach(key => {
@@ -78,6 +79,7 @@ const loadEnvVars = (): IEnvVars => {
         node_env: process.env.node_env as string,
         secret: process.env.secret as string,
         expiresIn: process.env.expiresIn as string,
+        FRONTEND_URL: process.env.FRONTEND_URL as string,
         becrypt_salt_round: process.env.becrypt_salt_round as string,
         super_admin_email: process.env.super_admin_email as string,
         super_admin_pass: process.env.super_admin_pass as string,
@@ -105,13 +107,13 @@ const loadEnvVars = (): IEnvVars => {
             CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY as string,
             CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET as string,
         },
-        // EMAIL_SENDER: {
-        //     SMTP_USER: process.env.SMTP_USER as string,
-        //     SMTP_PASS: process.env.SMTP_PASS as string,
-        //     SMTP_PORT: process.env.SMTP_PORT as string,
-        //     SMTP_HOST: process.env.SMTP_HOST as string,
-        //     SMTP_FROM: process.env.SMTP_FROM as string,
-        // },
+        EMAIL_SENDER: {
+            SMTP_USER: process.env.SMTP_USER as string,
+            SMTP_PASS: process.env.SMTP_PASS as string,
+            SMTP_PORT: process.env.SMTP_PORT as string,
+            SMTP_HOST: process.env.SMTP_HOST as string,
+            SMTP_FROM: process.env.SMTP_FROM as string,
+        }
     }
 }
 export const envVars = loadEnvVars()
