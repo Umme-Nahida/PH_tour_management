@@ -86,14 +86,13 @@ const resetPassword = async (payload: Record<string, any>, decodedToken: JwtPayl
 
    const isUserExist = await Users.findById(decodedToken.userId)
    
-   if(isUserExist){
+   if(!isUserExist){
       throw new AppError(httpStatus.BAD_REQUEST, "user does not exist")
    }
    const hashedPassword = await bcryptjs.hash(payload.newPass, Number(envVars.becrypt_salt_round))
 
-   if(isUserExist?.password){
-      isUserExist.password = hashedPassword;
-   }
+   
+   isUserExist.password = hashedPassword;
   
    await isUserExist.save()
 
@@ -168,17 +167,17 @@ const forgetPassword = async (email: string) => {
 
    const resetPasswordToken = jwt.sign(jwtPayload, envVars.secret, {expiresIn: "10m"})
    
-   const resetPasswordLink = `${envVars.FRONTEND_URL}/reset-password?userId=${isUserExist._id}&token=${resetPasswordToken}`
+   const resetUILink = `${envVars.FRONTEND_URL}/reset-password?userId=${isUserExist._id}&token=${resetPasswordToken}`
    sendEmail({
       to: isUserExist.email,
       subject: "Reset Password",
       templateName: "forgetPassword",
       templateData: {
          name: isUserExist.name,
-         resetPasswordLink
+         resetUILink
       }
    })
-   return resetPasswordLink
+   
 }
 
 export const authService = {

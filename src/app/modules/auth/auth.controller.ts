@@ -198,7 +198,7 @@ const googleCallback = catchAsync(async(req:Request,res:Response, next: NextFunc
     const tokenInfo = createUserTokens(user)
 
     setAuthCookie(res, tokenInfo)
-    res.redirect(`http://localhost:5000/${state}`)
+    res.redirect(`http://localhost:5000`)
     
 })
 
