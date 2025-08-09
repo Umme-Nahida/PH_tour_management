@@ -35,19 +35,24 @@ interface IEnvVars {
         CLOUDINARY_API_KEY: string;
         CLOUDINARY_API_SECRET: string;
     },
-        EMAIL_SENDER: {
+    EMAIL_SENDER: {
         SMTP_USER: string;
         SMTP_PASS: string;
         SMTP_PORT: string;
         SMTP_HOST: string;
         SMTP_FROM: string;
-    };
+    },
+    REDIS_HOST: string;
+    REDIS_PORT: string;
+    REDIS_USERNAME: string;
+    REDIS_PASSWORD: string;
+
 
 
 }
 
 const loadEnvVars = (): IEnvVars => {
-    const requiredEnvVars: string[] = ["port", "DB_Url", "node_env", "secret", "expiresIn","FRONTEND_URL", "becrypt_salt_round", "super_admin_email", "super_admin_pass", "refresh_expiresIn", "refresh_secret", "EXPRESS_SESSION_SECRET", "GOOGLE_CLIENT_SECRET", "GOOGLE_CLIENT_ID", "GOOGLE_CALLBACK_URL",
+    const requiredEnvVars: string[] = ["port", "DB_Url", "node_env", "secret", "expiresIn", "FRONTEND_URL", "becrypt_salt_round", "super_admin_email", "super_admin_pass", "refresh_expiresIn", "refresh_secret", "EXPRESS_SESSION_SECRET", "GOOGLE_CLIENT_SECRET", "GOOGLE_CLIENT_ID", "GOOGLE_CALLBACK_URL",
         "SSL_STORE_ID",
         "SSL_STORE_PASS",
         "SSL_PAYMENT_API", "SSL_VALIDATION_API",
@@ -65,6 +70,10 @@ const loadEnvVars = (): IEnvVars => {
         "SMTP_HOST",
         "SMTP_USER",
         "SMTP_FROM",
+        "REDIS_HOST",
+        "REDIS_PORT",
+        "REDIS_USERNAME",
+        "REDIS_PASSWORD"
     ]
 
     requiredEnvVars.forEach(key => {
@@ -101,8 +110,8 @@ const loadEnvVars = (): IEnvVars => {
             SSL_FAIL_BACKEND_URL: process.env.SSL_FAIL_BACKEND_URL as string,
             SSL_CANCEL_BACKEND_URL: process.env.SSL_CANCEL_BACKEND_URL as string,
         },
-        
-              CLOUDINARY: {
+
+        CLOUDINARY: {
             CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
             CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY as string,
             CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET as string,
@@ -113,7 +122,11 @@ const loadEnvVars = (): IEnvVars => {
             SMTP_PORT: process.env.SMTP_PORT as string,
             SMTP_HOST: process.env.SMTP_HOST as string,
             SMTP_FROM: process.env.SMTP_FROM as string,
-        }
+        },
+        REDIS_HOST: process.env.REDIS_HOST as string,
+        REDIS_PORT: process.env.REDIS_PORT as string,
+        REDIS_USERNAME: process.env.REDIS_USERNAME as string,
+        REDIS_PASSWORD: process.env.REDIS_PASSWORD as string,
     }
 }
 export const envVars = loadEnvVars()
