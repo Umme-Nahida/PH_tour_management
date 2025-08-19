@@ -22,7 +22,9 @@ app.use(cookieParser())
 app.use(express.json())
 // for smoothly working with form data
 app.use(express.urlencoded({extended: true}))
-app.use(cors())
+app.use(cors({
+  origin:["http://localhost:5173"]
+}))
 
 app.use('/api/v1', router)
 
